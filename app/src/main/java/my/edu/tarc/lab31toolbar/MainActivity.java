@@ -1,20 +1,32 @@
 package my.edu.tarc.lab31toolbar;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+    private TextView textViewMessage;
+    private float size, max = 36, min = 8;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Linking UI
+        textViewMessage = (TextView)findViewById(R.id.textViewMessage);
+        //TODO: get the default font size
+        size = textViewMessage.getTextSize()/getScreenDensity();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -45,8 +57,42 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }else if (id == R.id.action_increase){
+            if (size < max){
+                size++;
+                textViewMessage.setTextSize(size);
+            }else{
+                //getApplicationContext() = this
+                Toast.makeText(getApplicationContext(),
+                        "This is the max size",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }else if (id == R.id.action_decrease){
+            if (size > min){
+                size--;
+                textViewMessage.setTextSize(size);
+            }else{
+                Toast.makeText(getApplicationContext(),
+                        "This is the min size",
+                        Toast.LENGTH_SHORT).show();
+            }
+        }else if (id == R.id.action_about){
+            //TODO start the About Activity
+            Intent intent = new Intent(this,AboutActivity.class);
+            startActivity(intent);
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public float getScreenDensity(){
+        float sizeDensity=0;
+
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        sizeDensity = metrics.density;
+
+        return sizeDensity;
     }
 }
